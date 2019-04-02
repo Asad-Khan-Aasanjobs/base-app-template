@@ -1,0 +1,77 @@
+apply plugin: "com.android.application"
+
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-kapt"
+apply plugin: "kotlin-android-extensions"
+apply from: "./flavors.gradle"
+
+import static Libs.*
+import static Versions.*
+
+android {
+  compileSdkVersion Versions.compileSDK
+  defaultConfig {
+    applicationId "com.asadkhan.base_app"
+
+    minSdkVersion Versions.devSDK
+    targetSdkVersion Versions.targetSDK
+
+    versionCode 1
+    versionName "1.0"
+    buildToolsVersion Versions.buildTools
+
+    testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+  }
+  buildTypes {
+    debug {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+    }
+    release {
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+    }
+  }
+
+  flavorDimensions "scope"
+
+  productFlavors {
+    project.flavors.each { flavor, config ->
+      "$flavor" {
+        dimension "scope"
+        if (flavor != "full") {
+          versionNameSuffix ".$flavor"
+        }
+      }
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+configurations {
+  project.flavors.each { flavor, config ->
+    "$flavor" {
+      "${flavor}DebugImplementation"
+      "${flavor}ReleaseImplementation"
+    }
+  }
+}
+
+dependencies {
+  implementation fileTree(include: ['*.jar'], dir: 'libs')
+  api project(':global_module')
+
+  implementation Libs.kotlinStdLib
+
+  implementation 'com.android.support:appcompat-v7:28.0.0'
+  testImplementation 'junit:junit:4.12'
+  androidTestImplementation 'com.android.support.test:runner:1.0.2'
+  androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+repositories {
+  google()
+}
