@@ -1,1 +1,1 @@
-include ':app'
+include ":base_app", ":global_module"
