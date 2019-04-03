@@ -1,0 +1,13 @@
+class FlavorOptions {
+  final String entryModule
+
+  FlavorOptions(String entryModule) {
+    this.entryModule = entryModule
+  }
+}
+
+project.ext.flavors = [
+        full: new FlavorOptions(":flavor.full"),
+        slim : new FlavorOptions(":flavor.slim")
+]
+

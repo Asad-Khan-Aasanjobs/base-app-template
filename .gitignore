@@ -68,3 +68,7 @@ gradle/wrapper/gradle-wrapper.jar
 gradle/wrapper/gradle-wrapper.properties
 gradlew
 gradlew.bat
+/.gradletasknamecache
+
+# Local cached library modules dir
+/base_app/cached_libs/
