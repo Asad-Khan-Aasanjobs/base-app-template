@@ -1,0 +1,94 @@
+apply plugin: "com.android.application"
+
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-kapt"
+apply plugin: "kotlin-android-extensions"
+apply from: "./flavors.gradle"
+
+import static Libs.*
+import static Versions.*
+
+android {
+  compileSdkVersion Versions.compileSDK
+  defaultConfig {
+    applicationId "com.asadkhan.base_app"
+
+    minSdkVersion Versions.devSDK
+    targetSdkVersion Versions.targetSDK
+
+    versionCode 1
+    versionName "1.0"
+    buildToolsVersion Versions.buildTools
+
+    defaultPublishConfig "debug"
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+  }
+  buildTypes {
+    debug {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+    }
+    release {
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+    }
+  }
+  flavorDimensions "scope"
+  productFlavors {
+    project.flavors.each { flavor, config ->
+      "$flavor" {
+        print("Flavor: $flavor\n")
+        dimension "scope"
+        if (flavor != "full") {
+          versionNameSuffix ".$flavor"
+        }
+      }
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+configurations {
+  project.flavors.each { flavor, config ->
+    print("BuildFlavor: ${flavor}Implementation\n")
+    print("BuildFlavor: ${flavor}DebugImplementation\n")
+    print("BuildFlavor: ${flavor}ReleaseImplementation\n")
+    "$flavor" {
+      "${flavor}Implementation"
+      "${flavor}DebugImplementation"
+      "${flavor}ReleaseImplementation"
+    }
+  }
+}
+
+allprojects {
+  repositories {
+    flatDir {
+      dirs "libs"
+    }
+  }
+}
+
+dependencies {
+  implementation fileTree(include: ["*.jar"], dir: "libs")
+  implementation Libs.kotlinStdLib
+
+  slimImplementation fileTree(include: ["*.aar"], dir: "libs")
+  // All pre-build aar libs will be found in this dir
+  slimImplementation fileTree(include: ["*.aar"], dir: "cached_libs")
+
+  fullImplementation project(":global_module")
+
+  implementation "androidx.appcompat:appcompat:1.0.2"
+  implementation "androidx.constraintlayout:constraintlayout:1.1.3"
+  testImplementation "junit:junit:4.12"
+  androidTestImplementation "androidx.test:runner:1.1.1"
+  androidTestImplementation "androidx.test.espresso:espresso-core:3.1.1"
+}
+
+repositories {
+  google()
+}

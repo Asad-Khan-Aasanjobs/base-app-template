@@ -1,0 +1,3 @@
+include ":base_app"
+include ":global_module"
+

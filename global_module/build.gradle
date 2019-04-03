@@ -1,0 +1,67 @@
+apply plugin: "com.android.library"
+
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-kapt"
+apply plugin: "kotlin-android-extensions"
+
+import static Libs.*
+import static Versions.*
+
+def rootProguard = rootDir.path + "/base_app/proguard-rules.pro"
+
+android {
+  compileSdkVersion Versions.compileSDK
+  defaultConfig {
+
+    minSdkVersion Versions.devSDK
+    targetSdkVersion Versions.targetSDK
+
+    versionCode 1
+    versionName "1.0"
+
+    buildToolsVersion Versions.buildTools
+
+    defaultPublishConfig "debug"
+
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    libraryVariants.all { variant ->
+      //      // List all properties
+      //      for (Object p : variant.properties) {
+      //        print("Property: $p\n")
+      //      }
+      def varName = variant.name
+      print("Assemble Type: $varName\n")
+      if (varName == "debug") {
+        variant.assemble.doLast { output ->
+          print("Copying module artifact\n")
+          rootProject.archiveArtifact("global_module")
+        }
+      }
+    }
+  }
+  buildTypes {
+    debug {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+    }
+    release {
+      minifyEnabled false
+
+      consumerProguardFiles rootProguard
+      proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), rootProguard
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+dependencies {
+  implementation fileTree(include: ["*.jar"], dir: "libs")
+  implementation Libs.kotlinStdLib
+  testImplementation "junit:junit:4.12"
+  androidTestImplementation "androidx.test:runner:1.1.1"
+  androidTestImplementation "androidx.test.espresso:espresso-core:3.1.1"
+}
+
