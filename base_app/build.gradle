@@ -20,6 +20,7 @@ android {
     versionName "1.0"
     buildToolsVersion Versions.buildTools
 
+    defaultPublishConfig "debug"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
   }
   buildTypes {
@@ -32,12 +33,11 @@ android {
       proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
     }
   }
-
   flavorDimensions "scope"
-
   productFlavors {
     project.flavors.each { flavor, config ->
       "$flavor" {
+        print("Flavor: $flavor\n")
         dimension "scope"
         if (flavor != "full") {
           versionNameSuffix ".$flavor"
@@ -53,16 +53,34 @@ android {
 
 configurations {
   project.flavors.each { flavor, config ->
+    print("BuildFlavor: ${flavor}Implementation\n")
+    print("BuildFlavor: ${flavor}DebugImplementation\n")
+    print("BuildFlavor: ${flavor}ReleaseImplementation\n")
     "$flavor" {
+      "${flavor}Implementation"
       "${flavor}DebugImplementation"
       "${flavor}ReleaseImplementation"
     }
   }
 }
 
+allprojects {
+  repositories {
+    flatDir {
+      dirs "libs"
+    }
+  }
+}
+
 dependencies {
   implementation fileTree(include: ["*.jar"], dir: "libs")
-  api project(":global_module")
+  implementation Libs.kotlinStdLib
+
+  slimImplementation fileTree(include: ["*.aar"], dir: "libs")
+  // All pre-build aar libs will be found in this dir
+  slimImplementation fileTree(include: ["*.aar"], dir: "cached_libs")
+
+  fullImplementation project(":global_module")
 
   implementation "androidx.appcompat:appcompat:1.0.2"
   implementation "androidx.constraintlayout:constraintlayout:1.1.3"
