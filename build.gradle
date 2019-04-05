@@ -47,9 +47,43 @@ def archiveArtifact(String modName) {
   def baseSpec = copySpec {}
   copy {
     from("./${modName}/build/outputs/aar/")
-    include "${modName}-debug.aar"
+    include "${modName}-slim-debug.aar"
     into("./base_app/cached_libs/")
-    rename "${modName}-debug.aar", "${modName}.aar"
+    rename "${modName}-slim-debug.aar", "${modName}.aar"
+    with baseSpec
+  }
+}
+
+def archiveArtifact(String modName, String suffix) {
+  def baseSpec = copySpec {}
+  copy {
+    from("./${modName}/build/outputs/aar/")
+    //include "${modName}-slim-debug.aar"
+    include "${modName}-${suffix}.aar"
+    into("./base_app/cached_libs/")
+    rename "${modName}-${suffix}.aar", "${modName}.aar"
+    with baseSpec
+  }
+}
+
+def archiveArtifactTo(String modName, String dest_module) {
+  def baseSpec = copySpec {}
+  copy {
+    from("./${modName}/build/outputs/aar/")
+    include "${modName}-slim-debug.aar"
+    into("./${dest_module}/cached_libs/")
+    rename "${modName}-slim-debug.aar", "${modName}.aar"
+    with baseSpec
+  }
+}
+
+def archiveArtifactTo(String modName, String suffix, String dest_module) {
+  def baseSpec = copySpec {}
+  copy {
+    from("./${modName}/build/outputs/aar/")
+    include "${modName}-slim-debug.aar"
+    into("./${dest_module}/cached_libs/")
+    rename "${modName}-slim-debug.aar", "${modName}.aar"
     with baseSpec
   }
 }

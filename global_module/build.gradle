@@ -35,7 +35,7 @@ android {
       if (varName == "debug") {
         variant.assemble.doLast { output ->
           print("Copying module artifact\n")
-          rootProject.archiveArtifact("global_module")
+          rootProject.archiveArtifactTo("global_module", "base_module")
         }
       }
     }
@@ -52,6 +52,19 @@ android {
       proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), rootProguard
     }
   }
+
+  flavorDimensions "scope"
+  productFlavors {
+    rootProject.ext.flavors.each { flavor, config ->
+      "$flavor" {
+        print("Flavor: $flavor\n")
+        dimension "scope"
+        if (flavor != "full") {
+          versionNameSuffix ".$flavor"
+        }
+      }
+    }
+  }
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
@@ -60,6 +73,7 @@ android {
 dependencies {
   implementation fileTree(include: ["*.jar"], dir: "libs")
   implementation Libs.kotlinStdLib
+
   testImplementation "junit:junit:4.12"
   androidTestImplementation "androidx.test:runner:1.1.1"
   androidTestImplementation "androidx.test.espresso:espresso-core:3.1.1"
