@@ -1,6 +1,5 @@
 package com.asadkhan.base_module
 
-import com.asadkhan.global.Constants
 import com.asadkhan.global.Constants.answerToEverything
 
 object BaseConstant {
