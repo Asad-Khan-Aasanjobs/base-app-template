@@ -6,8 +6,8 @@ class FlavorOptions {
   }
 }
 
-project.ext.flavors = [
+rootProject.ext.flavors = [
         full: new FlavorOptions(":flavor.full"),
-        slim : new FlavorOptions(":flavor.slim")
+        slim: new FlavorOptions(":flavor.slim")
 ]
 
